@@ -34,7 +34,7 @@
       const attempt = ++playAttempt;
       try {
         await coupleVideo.play();
-        if (attempt === playAttempt && videoHelp) videoHelp.textContent = coupleVideo.muted ? mutedHint : 'Μπορείτε να ρυθμίσετε την ένταση από τα χειριστήρια του βίντεο.';
+        if (attempt === playAttempt && videoHelp) videoHelp.textContent = coupleVideo.muted ? mutedHint : ' ';
       } catch {
         if (attempt !== playAttempt || !inView || document.hidden) return;
         if (!coupleVideo.muted) {
