@@ -47,3 +47,51 @@
   .passport-stage::before { animation: none; opacity: .45; transform: none; }
   .passport-front::after { display: none; }
 }
+
+/* Subtle ambient sparkles, boarding-pass photo and viewport video (2026-11-09 v2). */
+.intro, .invitation { position: relative; isolation: isolate; }
+.ambient-sparkles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.intro > :not(.ambient-sparkles), .invitation > :not(.ambient-sparkles) { position: relative; z-index: 1; }
+.sparkle {
+  position: absolute; left: var(--x); top: var(--y); width: var(--size); height: var(--size);
+  background: radial-gradient(circle, #fff9df 0 12%, #c9a76b 35%, transparent 73%);
+  clip-path: polygon(50% 0%, 60% 39%, 100% 50%, 60% 61%, 50% 100%, 40% 61%, 0% 50%, 40% 39%);
+  opacity: 0; transform: scale(.45); pointer-events: none;
+  animation: ambientTwinkle var(--duration) ease-in-out var(--delay) infinite;
+}
+@keyframes ambientTwinkle {
+  0%, 16%, 43%, 100% { opacity: 0; transform: scale(.45) rotate(0deg); }
+  27% { opacity: .72; transform: scale(1) rotate(10deg); }
+  33% { opacity: .35; transform: scale(.85) rotate(15deg); }
+}
+.ticket-main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .85fr); align-items: center; gap: 24px; }
+.ticket-copy { position: relative; min-width: 0; }
+.ticket-copy .ticket-fields { grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr); }
+.ticket-copy .ticket-fields p { overflow-wrap: break-word; }
+.ticket-photo { margin: 0; padding: 8px; background: #fffaf0; border: 1px solid #d2c3a8; box-shadow: 0 8px 22px #5b49391a; transform: rotate(1.5deg); }
+.ticket-photo img { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: contain; }
+.ticket-copy .flight-path { opacity: .3; }
+.video-actions { text-align: center; margin-top: 19px; }
+.video-sound { min-height: 44px; padding: 11px 20px; border: 1px solid #967344; background: #f5f0e5; color: #5f472b; font-size: 12px; letter-spacing: .025em; }
+.video-sound:hover, .video-sound[aria-pressed="true"] { background: #7c613a; color: #fff; }
+@media (max-width: 900px) and (min-width: 601px) {
+  .boarding-pass { grid-template-columns: 1fr 145px; }
+  .ticket-main { padding: 28px 24px; gap: 18px; }
+  .ticket-copy h2 { font-size: 22px; }
+  .ticket-copy .ticket-save { font-size: 28px; }
+  .ticket-copy .ticket-fields { grid-template-columns: 1fr; }
+  .ticket-copy .location a { font-size: 16px; }
+}
+@media (max-width: 760px) {
+  .ticket-main { grid-template-columns: 1fr; }
+  .ticket-photo { width: min(100%, 260px); justify-self: center; margin: 8px 0 6px; }
+}
+@media (max-width: 600px) {
+  .ticket-main { gap: 18px; }
+  .ticket-photo { width: min(88%, 260px); }
+  .ticket-copy .ticket-fields { grid-template-columns: minmax(0, 1.7fr) minmax(0, .65fr); }
+  .sparkle:nth-child(n+9) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ambient-sparkles { display: none; } }
+
+.photo-frame video { aspect-ratio: 9 / 16; }

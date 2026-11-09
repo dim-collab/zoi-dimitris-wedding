@@ -17,12 +17,74 @@
   $('passport').addEventListener('click',openInvitation);
   document.querySelector('.skip-link').addEventListener('click',e=>{if($('invitation').hidden){e.preventDefault();openInvitation();}});
   $('back-cover').addEventListener('click',()=>{$('invitation').hidden=true;$('intro').hidden=false;$('intro').classList.remove('opening');$('passport').disabled=false;$('passport').setAttribute('aria-expanded','false');opening=false;window.scrollTo(0,0);$('passport').focus({preventScroll:true});});
-  // Video replaces the old photo handler. RSVP logic below is unchanged.
+  // Viewport-triggered video; audio is enabled only by an explicit guest action.
   const coupleVideo = $('couple-video');
   const videoError = $('video-error');
+  const soundButton = $('video-sound');
+  const videoHelp = $('video-help');
   if (coupleVideo) {
-    coupleVideo.muted = false;
+    let inView = false;
+    let playAttempt = 0;
+    coupleVideo.muted = true;
     coupleVideo.volume = 1;
+    const syncSoundButton = () => {
+      const audible = !coupleVideo.muted && coupleVideo.volume > 0;
+      if (soundButton) {
+        soundButton.textContent = audible ? 'Σίγαση ήχου' : 'Ενεργοποίηση ήχου';
+        soundButton.setAttribute('aria-pressed', String(audible));
+      }
+    };
+    const pauseVideo = () => { playAttempt++; coupleVideo.pause(); };
+    const autoplayWhenVisible = async () => {
+      if (!inView || document.hidden || motion.matches || coupleVideo.ended) return;
+      const attempt = ++playAttempt;
+      try {
+        await coupleVideo.play();
+      } catch {
+        if (attempt !== playAttempt || !inView || document.hidden) return;
+        // Some browsers require muting again after leaving/re-entering the section.
+        if (!coupleVideo.muted) {
+          coupleVideo.muted = true;
+          syncSoundButton();
+          try { await coupleVideo.play(); return; } catch { /* Native controls remain available. */ }
+        }
+        if (attempt === playAttempt && videoHelp) {
+          videoHelp.textContent = 'Πατήστε αναπαραγωγή στο βίντεο. Για ήχο, πατήστε «Ενεργοποίηση ήχου».';
+        }
+      }
+    };
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver(entries => {
+        const entry = entries[0];
+        // Hysteresis avoids rapid play/pause at the edge of the viewport.
+        const visible = entry.isIntersecting && entry.intersectionRatio >= (inView ? 0.15 : 0.35);
+        if (visible === inView) return;
+        inView = visible;
+        if (inView) autoplayWhenVisible(); else pauseVideo();
+      }, { threshold: [0, 0.15, 0.35, 0.5, 0.75, 1] });
+      videoObserver.observe(coupleVideo);
+    } else if (videoHelp) {
+      videoHelp.textContent = 'Πατήστε αναπαραγωγή στο βίντεο. Για ήχο, πατήστε «Ενεργοποίηση ήχου».';
+    }
+    if (soundButton) soundButton.addEventListener('click', async () => {
+      const enable = coupleVideo.muted || coupleVideo.volume === 0;
+      coupleVideo.muted = !enable;
+      if (enable) coupleVideo.volume = 1;
+      syncSoundButton();
+      if (enable) {
+        ++playAttempt;
+        try {
+          // play() is invoked directly inside this user gesture for mobile audio permission.
+          await coupleVideo.play();
+          if (videoHelp) videoHelp.textContent = 'Ο ήχος είναι ενεργός. Μπορείτε να τον κλείσετε από το κουμπί σίγασης.';
+        } catch {
+          if (videoHelp) videoHelp.textContent = 'Ο ήχος είναι ενεργός. Πατήστε αναπαραγωγή στα χειριστήρια του βίντεο.';
+        }
+      } else if (videoHelp) {
+        videoHelp.textContent = 'Ο ήχος είναι σε σίγαση. Πατήστε «Ενεργοποίηση ήχου» για να μας ακούσετε.';
+      }
+    });
+    coupleVideo.addEventListener('volumechange', syncSoundButton);
     const showVideoError = () => { if (videoError) videoError.hidden = false; };
     coupleVideo.addEventListener('error', showVideoError);
     const videoSource = coupleVideo.querySelector('source');
@@ -30,10 +92,18 @@
     coupleVideo.addEventListener('loadeddata', () => {
       if (videoError) videoError.hidden = true;
     });
-    $('back-cover').addEventListener('click', () => coupleVideo.pause());
+    $('back-cover').addEventListener('click', () => { inView = false; pauseVideo(); });
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) coupleVideo.pause();
+      if (document.hidden) pauseVideo(); else autoplayWhenVisible();
     });
+    if (motion.matches && videoHelp) videoHelp.textContent = 'Πατήστε αναπαραγωγή στο βίντεο. Για ήχο, πατήστε «Ενεργοποίηση ήχου».';
+    motion.addEventListener?.('change', () => {
+      if (motion.matches) {
+        pauseVideo();
+        if (videoHelp) videoHelp.textContent = 'Πατήστε αναπαραγωγή στο βίντεο. Για ήχο, πατήστε «Ενεργοποίηση ήχου».';
+      } else autoplayWhenVisible();
+    });
+    syncSoundButton();
   }
   $('storage-note').textContent=configured?'Η απάντησή σας θα αποθηκευτεί και θα είναι ορατή μόνο στο ζευγάρι.':'Προεπισκόπηση φόρμας: η αποθήκευση δεν έχει ενεργοποιηθεί. Οι απαντήσεις δεν αποστέλλονται στο ζευγάρι.';
   const showPanel=()=>{$('rsvp-panel').hidden=false;$('rsvp-toggle').setAttribute('aria-expanded','true');};
