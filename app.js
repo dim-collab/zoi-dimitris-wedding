@@ -17,7 +17,24 @@
   $('passport').addEventListener('click',openInvitation);
   document.querySelector('.skip-link').addEventListener('click',e=>{if($('invitation').hidden){e.preventDefault();openInvitation();}});
   $('back-cover').addEventListener('click',()=>{$('invitation').hidden=true;$('intro').hidden=false;$('intro').classList.remove('opening');$('passport').disabled=false;$('passport').setAttribute('aria-expanded','false');opening=false;window.scrollTo(0,0);$('passport').focus({preventScroll:true});});
-  const photo=$('couple-photo');photo.addEventListener('error',()=>{if(!photo.src.endsWith('couple-placeholder.svg')){photo.src='./assets/couple-placeholder.svg';photo.alt='Προσωρινή θέση για τη φωτογραφία μας';}});photo.addEventListener('load',()=>{if(!photo.src.endsWith('couple-placeholder.svg'))photo.alt='Η Ζωή και ο Δημήτρης';});photo.src=config.couplePhoto;
+  // Video replaces the old photo handler. RSVP logic below is unchanged.
+  const coupleVideo = $('couple-video');
+  const videoError = $('video-error');
+  if (coupleVideo) {
+    coupleVideo.muted = false;
+    coupleVideo.volume = 1;
+    const showVideoError = () => { if (videoError) videoError.hidden = false; };
+    coupleVideo.addEventListener('error', showVideoError);
+    const videoSource = coupleVideo.querySelector('source');
+    if (videoSource) videoSource.addEventListener('error', showVideoError);
+    coupleVideo.addEventListener('loadeddata', () => {
+      if (videoError) videoError.hidden = true;
+    });
+    $('back-cover').addEventListener('click', () => coupleVideo.pause());
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) coupleVideo.pause();
+    });
+  }
   $('storage-note').textContent=configured?'Η απάντησή σας θα αποθηκευτεί και θα είναι ορατή μόνο στο ζευγάρι.':'Προεπισκόπηση φόρμας: η αποθήκευση δεν έχει ενεργοποιηθεί. Οι απαντήσεις δεν αποστέλλονται στο ζευγάρι.';
   const showPanel=()=>{$('rsvp-panel').hidden=false;$('rsvp-toggle').setAttribute('aria-expanded','true');};
   $('rsvp-toggle').addEventListener('click',()=>{const expanded=$('rsvp-toggle').getAttribute('aria-expanded')==='true';$('rsvp-panel').hidden=expanded;$('rsvp-toggle').setAttribute('aria-expanded',String(!expanded));if(!expanded&&!submitted)$('guest-name').focus({preventScroll:true});});

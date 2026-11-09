@@ -7,3 +7,43 @@
 @media(max-width:600px){.intro{padding-top:24px}.intro-caption{margin-bottom:24px}.passport-stage{width:min(310px,75vw)}.passport-heading{font-size:27px;margin-top:28px}.passport-subheading{font-size:7px}.cover-mark{margin-top:28px;width:145px}.cover-names{font-size:20px}.save-date{font-size:10px;margin-top:13px}.cover-date{font-size:7px;margin-bottom:25px}.intro-footer{font-size:7px}.open-instruction{font-size:10px;margin-top:30px}.invitation{padding:0 20px}.invitation-nav{font-size:10px;padding:15px 0}.journey-heading{padding:42px 0 34px}.boarding-pass{grid-template-columns:1fr;transform:none}.ticket-main{padding:24px 24px 35px}.ticket-save{font-size:30px}.boarding-pass h2{font-size:22px;letter-spacing:.015em;margin-bottom:26px}.ticket-fields{grid-template-columns:1.4fr .6fr;gap:12px}.ticket-fields p{font-size:17px}.location a{font-size:17px}.flight-path{width:110px;opacity:.28}.ticket-stub{border-left:0;border-top:1px dashed #c1ae8b;display:grid;grid-template-columns:38px 1fr 90px;gap:12px;padding:18px 24px;text-align:left}.ticket-stub:before{left:-11px;top:-11px}.ticket-stub:after{left:auto;right:-11px;top:-11px;bottom:auto}.ticket-stub img{width:35px;grid-row:1/3}.ticket-stub p{display:none}.ticket-stub strong{font:18px var(--serif);grid-column:2;grid-row:1}.ticket-stub strong span{display:inline;margin:0 7px}.ticket-stub strong span:before,.ticket-stub strong span:after{content:'·';margin:0 5px}.barcode{margin:0;grid-column:3;grid-row:1/3;width:80px;height:30px}.ticket-code{grid-column:2;grid-row:2}.photo-section{max-width:320px;margin-top:46px}.rsvp-section{margin-top:38px}.rsvp-toggle{font-size:20px;padding:12px 0}.page-footer{padding-top:35px}.ticket-main h3{font-size:8px}.eyebrow{font-size:9px}}
 @media(max-width:360px){.passport-stage{width:250px}.passport-heading{font-size:24px}.passport-subheading{font-size:6px}.cover-mark{width:125px;margin-top:24px}.cover-names{font-size:18px}.cover-date{margin-bottom:22px}.boarding-pass h2{font-size:19px}.ticket-main{padding-left:18px;padding-right:18px}.invitation{padding:0 14px}.ticket-fields p{font-size:15px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.opening .passport{transform:rotate(-4deg);opacity:0}}
+
+/* Passport glow, central Z/D emblem and video. Added 2026-11-09. */
+.passport-stage::before {
+  content: ""; position: absolute; inset: -24px; border-radius: 30px;
+  background: radial-gradient(ellipse at center, rgba(239,204,127,.48) 0%, rgba(239,204,127,.16) 48%, transparent 74%);
+  filter: blur(18px); opacity: .55; pointer-events: none; z-index: -1;
+  animation: passportGlow 5s ease-in-out infinite;
+}
+@keyframes passportGlow {
+  0%,100% { opacity: .4; transform: scale(.97); }
+  50% { opacity: .8; transform: scale(1.04); }
+}
+.passport-front { overflow: hidden; }
+.passport-front::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(115deg, transparent 32%, rgba(255,249,221,.08) 42%, rgba(255,249,221,.48) 50%, rgba(255,249,221,.08) 58%, transparent 68%);
+  transform: translateX(-140%); pointer-events: none; z-index: 5;
+  animation: passportShine 7s ease-in-out infinite;
+}
+@keyframes passportShine {
+  0%,58% { transform: translateX(-140%); opacity: 0; }
+  64% { opacity: 1; }
+  86% { transform: translateX(140%); opacity: 1; }
+  100% { transform: translateX(140%); opacity: 0; }
+}
+.passport-front .gold-cord { z-index: 2; }
+.passport-front .cover-mark {
+  position: absolute; top: 49%; left: 50%; width: 62%; max-width: 220px;
+  margin: 0; transform: translate(-50%,-50%); z-index: 3; pointer-events: none;
+}
+.passport-front .cover-mark img {
+  display: block; width: 100%; height: auto;
+  filter: drop-shadow(0 2px 3px rgba(91,64,27,.18));
+}
+.photo-frame video { display: block; width: 100%; height: auto; max-width: 100%; background: #30291f; object-fit: contain; }
+.video-help { margin: 15px 0; font-size: 12px; line-height: 1.7; text-align: center; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) {
+  .passport-stage::before { animation: none; opacity: .45; transform: none; }
+  .passport-front::after { display: none; }
+}

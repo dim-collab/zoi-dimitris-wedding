@@ -6,8 +6,8 @@
   <meta name="description" content="Ζωή και Δημήτρης — 04 Σεπτεμβρίου 2027, Νέα Μηχανιώνα. Το προσκλητήριο για το δικό μας ταξίδι.">
   <title>Ζωή και Δημήτρης — Το ταξίδι μας</title>
   <link rel="icon" href="./assets/compass.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./config.js" defer></script><script src="./rsvp-core.js" defer></script><script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=20261109-1">
+  <script src="./config.js" defer></script><script src="./rsvp-core.js" defer></script><script src="./app.js?v=20261109-1" defer></script>
 </head>
 <body>
   <svg class="symbol-bank" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -23,7 +23,7 @@
           <span class="passport-front">
             <span class="passport-heading">ΔΙΑΒΑΤΗΡΙΟ</span>
             <span class="passport-subheading">ΠΡΟΣΚΛΗΣΗ ΣΕ ΕΝΑ ΤΑΞΙΔΙ ΖΩΗΣ</span>
-            <span class="cover-mark"><img src="./assets/compass.svg" alt=""><svg class="cover-plane"><use href="#plane"/></svg></span>
+            <span class="cover-mark"><img src="./assets/passport-emblem.png" alt="" aria-hidden="true"></span>
             <span class="gold-cord" aria-hidden="true"></span>
             <span class="cover-names">ZOI &amp; DIMITRIS</span>
             <span class="save-date">SAVE THE DATE</span>
@@ -66,10 +66,24 @@
           </div>
           <svg class="flight-path" viewBox="0 0 280 110" fill="none" aria-hidden="true"><path d="M4 90C45-10 130 20 143 53s-10 60-30 25 66-41 110-57" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"/><path d="M221 17l24-8-8 23-6-10z" fill="currentColor"/></svg>
         </div>
-        <aside class="ticket-stub" aria-label="Η ημερομηνία του γάμου"><img src="./assets/compass.svg" alt=""><p>ΤΟ ΤΑΞΙΔΙ ΜΑΣ</p><strong>04<span>09</span>2027</strong><div class="barcode" aria-hidden="true"></div><span class="ticket-code">ΖΔ · 11092027</span></aside>
+        <aside class="ticket-stub" aria-label="Η ημερομηνία του γάμου"><img src="./assets/compass.svg" alt=""><p>ΤΟ ΤΑΞΙΔΙ ΜΑΣ</p><strong>04<span>09</span>2027</strong><div class="barcode" aria-hidden="true"></div><span class="ticket-code">ΖΔ · 04092027</span></aside>
       </article>
-      <section class="photo-section" aria-label="Η φωτογραφία μας">
-        <div class="photo-frame"><img id="couple-photo" src="./assets/couple-placeholder.svg" alt="Θέση για τη φωτογραφία της Ζωής και του Δημήτρη"><span class="photo-corner" aria-hidden="true"></span></div>
+      <section class="photo-section" aria-label="Το βίντεό μας">
+        <div class="photo-frame">
+          <video id="couple-video" controls playsinline preload="metadata"
+            poster="./assets/video-poster.svg"
+            aria-label="Το βίντεο της Ζωής και του Δημήτρη" aria-describedby="video-help">
+            <source src="./assets/couple-video.mp4" type="video/mp4">
+            Ο περιηγητής σας δεν υποστηρίζει βίντεο.
+            <a href="./assets/couple-video.mp4">Ανοίξτε το βίντεο εδώ.</a>
+          </video>
+          <span class="photo-corner" aria-hidden="true"></span>
+        </div>
+        <p id="video-help" class="video-help">Πατήστε αναπαραγωγή για να δείτε το βίντεό μας με ήχο.</p>
+        <p id="video-error" class="video-help" role="status" hidden>
+          Το βίντεο δεν μπόρεσε να φορτωθεί.
+          <a href="./assets/couple-video.mp4" target="_blank" rel="noopener">Δοκιμάστε να το ανοίξετε εδώ.</a>
+        </p>
         <p class="photo-caption">Η αρχή του δικού μας ταξιδιού.</p>
       </section>
       <section class="rsvp-section" id="rsvp" aria-labelledby="rsvp-heading">
