@@ -95,3 +95,29 @@
 @media (prefers-reduced-motion: reduce) { .ambient-sparkles { display: none; } }
 
 .photo-frame video { aspect-ratio: 9 / 16; }
+
+/* v3: fixed, more visible background stars; one layer for both screens. */
+body {
+  background: radial-gradient(ellipse at 40% 34%, #fbf8f0 0%, #e9e3d8 57%, #d7cebe 100%);
+  background-attachment: fixed;
+}
+body > .ambient-sparkles { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; display: block; }
+body > main { position: relative; z-index: 1; }
+.intro { background: transparent; }
+body > .ambient-sparkles .sparkle {
+  display: block; width: calc(var(--size) * 1.9); height: calc(var(--size) * 1.9);
+  background: linear-gradient(135deg, #f6db94 0%, #b48635 48%, #f9e9b9 100%);
+  clip-path: polygon(50% 0%, 59% 39%, 100% 50%, 59% 61%, 50% 100%, 41% 61%, 0% 50%, 41% 39%);
+  filter: drop-shadow(0 0 4px #f2d79c); opacity: 0;
+  animation: visibleBling calc(var(--duration) * .7) ease-in-out var(--delay) infinite;
+}
+@keyframes visibleBling {
+  0%, 8%, 63%, 100% { opacity: 0; transform: scale(.35) rotate(0deg); }
+  26% { opacity: .95; transform: scale(1) rotate(12deg); }
+  43% { opacity: .65; transform: scale(.85) rotate(22deg); }
+}
+@media (max-width: 600px) { body > .ambient-sparkles .sparkle:nth-child(n+9) { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  body > .ambient-sparkles .sparkle { animation: none; opacity: 0; transform: none; }
+  body > .ambient-sparkles .sparkle:nth-child(3n) { opacity: .4; }
+}
